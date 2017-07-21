@@ -170,6 +170,19 @@ export default class EventParser {
             if (typeof item.PersonsString == 'undefined') {
                 item.PersonsString = "";
             }
+
+            //try to clean up poorly formatted urls
+            if (item.URL) {
+                item.URL = decodeURIComponent(item.URL);
+            }
+
+            if (item.URLvideo) {
+                item.URLvideo = decodeURIComponent(item.URLvideo);
+            }
+
+            if (typeof item.Key == 'undefined') {
+                item.Key = this.simpleHash(item.Title);
+            }
         }
 
         data.Items.sort(function (a, b) {
