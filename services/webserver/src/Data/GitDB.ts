@@ -26,6 +26,7 @@ export default class GitDB {
         this.localRepoPath = path.normalize(process.cwd() + "/" + options.localPath);
     }
 
+    //Checks if the local repo already exists creating it if not then updating the database
     async update(): Promise<void> {
         let localRepoExists = await Git.repoExists(this.localRepoPath);
 
@@ -34,12 +35,11 @@ export default class GitDB {
         } else {
             await Git.clone(this.localRepoPath, this.remoteRepoPath);
         }
-
         await this._updateDB();
 
     }
 
-    //overly synchronous but still fast enough
+    //gets all the filenames from the data folder then updates/inserts them as needed
     private async _updateDB(): Promise<void> {
         let jsonFilesPath = path.join(this.localRepoPath, "/data/");
         let jsonFilenames = await readDir(jsonFilesPath);
@@ -56,6 +56,7 @@ export default class GitDB {
         })
     }
 
+    //parses the JSON from the files then decides to insert or update the database
     private async _updateJSON(filename): Promise<void> {
         //dbnames have to be lowercase and start with letters
         let dbname = "couch" + filename.toLowerCase().split(".")[0];
@@ -85,9 +86,10 @@ export default class GitDB {
 
     }
 
+    //Compares githash from the latest git pull to stored value in git to check if it is out of date
     private async _isOutofDate(dbname: string, document: string, githash: string) {
         let dbdocument = await this.couchdb.getDocument(dbname, document);
-        return dbdocument.data["githash"] != githash
+        return dbdocument.data[document]["githash"] != githash
     }
 
     private async _insertEvent(dbname: string, event: any): Promise<void> {
@@ -114,6 +116,7 @@ export default class GitDB {
 
     }
 
+    //Updates subparts of events so if nothing was changed in people it won't need to be pulled by client
     private async _updateEvent(dbname: string, event: any): Promise<void> {
         let documentsToUpdate: string[] = [this.EVENT_METADATA_ID, this.EVENT_ITEMS_ID, this.EVENT_PEOPLE_ID, this.EVENT_SESSIONS_ID];
 
@@ -124,7 +127,7 @@ export default class GitDB {
             if(!deepEqual(couchVersion[documentName], gitVersion, {strict: true})){
                 let toUpdate = {};
                 toUpdate[documentName] =  event[documentName];
-                toUpdate["_rev"] = couchVersion["_rev"];
+                toUpdate["_rev"] = couchVersion.data["_rev"];
                 this.couchdb.createDocument(dbname, toUpdate, documentName)
                     .catch((err)=>{
                             Log.error("Failed to update document: " + documentName + "for db: " +dbname);
@@ -137,6 +140,7 @@ export default class GitDB {
 
     }
 
+    //checks if the event already exists in couch
     private async _isInCouch(dbname: string, document: string): Promise<boolean> {
         try {
             await this.couchdb.getDocument(dbname, document);
@@ -148,6 +152,7 @@ export default class GitDB {
         return true;
     }
 
+    //index file is used by main page
     private async _updateIndex(): Promise<void> {
         //creates index file if it doesn't already exist
         let inCouch: boolean = await this._isInCouch("index", "index");
