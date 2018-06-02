@@ -5,10 +5,8 @@ const path = require('path');
 
 let app     = express();
 let dev     = process.env.NODE_ENV === "development"
-let dbhost  =  dev ? "localhost" : "couchdb";
+let dbhost  = dev ? "localhost" : "couchdb";
 let gitpath = dev ? path.normalize(process.cwd() + "../../shared/") : "/usr/shared/";
-
-console.log(process.env)
 
 let gitDB = new GitDB({
         couchoptions: {

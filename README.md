@@ -15,16 +15,14 @@ Confero-Server
   * CONFERO_PORT port nginx will bind to
   
 ### Deployment: ###
-in webserver:
-npm install
-npm run build
 
-pull:
-https://github.com/Simonah88/confero-app
-in the app folder:
-npm install
-npm run buildweb
+  * bash buildprod.sh [url for app, can be host:port]
+  * docker-compose -f ./services/docker-compose.prod.yml up -d
 
-in /services:
-docker-compose up --build 
+  Teardown:
+
+  * docker-compose -f ./services/docker-compose.prod.yml down
+
+
+
 
