@@ -1,31 +1,31 @@
 version: '3'
 
-
 services:
   nginx:
     build: ./nginx
+    restart: always
     ports:
       - ${CONFERO_PORT}:80
     depends_on:
       - couchdb
       - webserver
     volumes:
-      - ./shared:/usr/shared
-
+      - shared:/usr/shared
   couchdb:
     build: ./couchdb
+    restart: always
     environment:
       - COUCHDB_USER=${CONFERO_COUCH_USER}
       - COUCHDB_PASSWORD=${CONFERO_COUCH_PW}
-    ports:
-      - 5984:5984
-
   webserver:
     build: ./webserver
+    restart: always
     environment:
       - CONFERO_COUCH_USER
       - CONFERO_COUCH_PW
     depends_on:
       - couchdb
     volumes:
-      - ./shared:/usr/shared
+      - shared:/usr/shared
+volumes:
+  shared:

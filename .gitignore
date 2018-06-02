@@ -3,3 +3,4 @@ node_modules/
 services/shared
 webserver/src/**/*.js
 webserver/src/**/*.map
+services/nginx/wwww/

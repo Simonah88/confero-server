@@ -23,7 +23,7 @@ export default class GitDB {
     constructor(options) {
         this.couchdb = dbDriver(options.couchoptions);
         this.remoteRepoPath = options.remotePath;
-        this.localRepoPath = path.normalize(process.cwd() + "/" + options.localPath);
+        this.localRepoPath = options.localPath;
     }
 
     //Checks if the local repo already exists creating it if not then updating the database

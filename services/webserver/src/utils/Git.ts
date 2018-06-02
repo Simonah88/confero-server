@@ -22,7 +22,7 @@ export default class Git {
         if (!fs.existsSync(localPath)) {
             fs.mkdirSync(localPath);
         }
-        await exec(`git clone ${remotePath} .`, {cwd: localPath});
+        await exec(`git clone --depth=1 ${remotePath} .`, {cwd: localPath});
     }
 
     static async getFileHash(filepath: string, repoPath: string): Promise<string> {
