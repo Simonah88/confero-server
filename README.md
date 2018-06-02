@@ -11,7 +11,6 @@ Confero-Server
 ### Environmental variables: ###
   * CONFERO_COUCH_USER
   * CONFERO_COUCH_PW
-  * CONFERO_REMOTE_URL serverurl
   * CONFERO_PORT port nginx will bind to
   
 ### Deployment: ###
